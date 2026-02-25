@@ -53,7 +53,7 @@ encoders = pickle.load(open("label_encoders.pkl", "rb"))
 st.title("Healt Risk Predictor")
 
 age=st.slider("Age",18,80,22)
-diet=st.selectbox("Diet Quality", ['poor', 'Average', 'Good'])
+diet=st.selectbox("Diet Quality", ['Poor', 'Average', 'Good'])
 exercise=st.slider("Exersice Day per week",0,7,3)
 sleep=st.slider("Sleep Hours",3,12,6)
 stress=st.selectbox("Stress level",['Low', 'Medium', 'High'])
@@ -84,7 +84,7 @@ if st.button("Predict Risk"):
     st.success(risk_label)
 
     # Map categorical factors to human-friendly numeric scores for charting
-    diet_score_map = {"poor": 1, "Average": 2, "Good": 3}
+    diet_score_map = {"Poor": 1, "Average": 2, "Good": 3}
     stress_score_map = {"Low": 1, "Medium": 2, "High": 3}
 
     factors = {
