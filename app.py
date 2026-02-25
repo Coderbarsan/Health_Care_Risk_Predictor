@@ -83,14 +83,16 @@ if st.button("Predict Risk"):
 
     st.success(risk_label)
 
-    # Bar Chart for lifestyle
+    # Map categorical factors to human-friendly numeric scores for charting
+    diet_score_map = {"poor": 1, "Average": 2, "Good": 3}
+    stress_score_map = {"Low": 1, "Medium": 2, "High": 3}
 
-    factors={
-        "Diet":encoders['diet'].transform([diet])[0],
-        "Excercise":exercise,
-        "Sleep":sleep,
-        "Stress":encoders['stress'].transform([stress])[0],
-        "BMI":bmi
+    factors = {
+        "Diet": diet_score_map.get(diet, encoders['diet'].transform([diet])[0]),
+        "Excercise": exercise,
+        "Sleep": sleep,
+        "Stress": stress_score_map.get(stress, encoders['stress'].transform([stress])[0]),
+        "BMI": bmi,
     }
 
     bar_fig=px.bar(
