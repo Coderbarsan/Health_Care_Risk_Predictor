@@ -2,11 +2,53 @@ import streamlit as st
 import pickle
 import numpy as np
 import plotly.express as px
+import os
+import requests
 
-model=pickle.load(open("Health_risk_predictor.pkl",'rb'))
+
+def ensure_file(path: str, secret_key: str | None = None) -> bool:
+    """Ensure `path` exists locally; if not and a URL secret is provided,
+    download it. Returns True if the file is available locally.
+    """
+    if os.path.exists(path):
+        return True
+    if secret_key is None:
+        return False
+    try:
+        url = st.secrets.get(secret_key)
+    except Exception:
+        url = None
+    if not url:
+        return False
+    try:
+        resp = requests.get(url, timeout=30)
+        resp.raise_for_status()
+        with open(path, "wb") as f:
+            f.write(resp.content)
+        return True
+    except Exception:
+        return False
 
 
-encoders=pickle.load(open("label_encoders.pkl","rb"))
+# Ensure model files exist (optionally set MODEL_URL and ENCODERS_URL in Streamlit secrets)
+if not ensure_file("Health_risk_predictor.pkl", "MODEL_URL"):
+    st.error(
+        "Model file `Health_risk_predictor.pkl` not found.\n"
+        "Add the file to your repo or set `MODEL_URL` in Streamlit secrets to a direct download URL."
+    )
+    st.stop()
+
+if not ensure_file("label_encoders.pkl", "ENCODERS_URL"):
+    st.error(
+        "Encoders file `label_encoders.pkl` not found.\n"
+        "Add the file to your repo or set `ENCODERS_URL` in Streamlit secrets to a direct download URL."
+    )
+    st.stop()
+
+model = pickle.load(open("Health_risk_predictor.pkl", 'rb'))
+
+
+encoders = pickle.load(open("label_encoders.pkl", "rb"))
 
 st.title("Healt Risk Predictor")
 
